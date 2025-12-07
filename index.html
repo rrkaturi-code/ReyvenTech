@@ -92,7 +92,7 @@
 
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
-      emailjs.init('YOUR_EMAILJS_PUBLIC_KEY');
+      emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); // replace with actual public key
 
       document.getElementById('contactButton').addEventListener('click', () => {
         document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
@@ -111,7 +111,7 @@
           message: form.message.value,
         };
 
-        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+        emailjs.send('service_84cfyg6', 'YOUR_TEMPLATE_ID', templateParams)
           .then(() => {
             feedback.textContent = 'Message sent—thank you for contacting Reyven Tech.';
             feedback.style.color = '#8cb9ff';
