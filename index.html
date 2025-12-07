@@ -117,6 +117,9 @@
             feedback.textContent = 'Message sent—thank you for contacting Reyven Tech.';
             feedback.style.color = '#8cb9ff';
             form.reset();
+            setTimeout(() => {
+              window.location.href = 'thank-you.html';
+            }, 1500);
           })
           .catch(error => {
             console.error('EmailJS error', error);
