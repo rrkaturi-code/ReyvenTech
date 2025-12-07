@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reyven Tech | Moderation Company</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-content">
+      <p class="eyebrow">Reyven Tech Moderation Services</p>
+      <h1>Reyven Tech</h1>
+      <p class="quote">"The application that stops preditors made by Venisha Katuri And Reyansh Katuri"</p>
+      <p class="lede">We protect online communities with proactive moderation, custom intelligence, and human oversight.</p>
+      <div class="cta-row">
+        <button class="primary" id="contactButton">Contact our team</button>
+        <p class="trust">Trusted by gaming, education, and live streaming platforms.</p>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="glow"></div>
+      <div class="badge">24/7</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="mission">
+      <h2>Our Mission</h2>
+      <p>
+        Reyven Tech is a moderation company engineered to stop toxic behavior before it spreads. We blend curated automation,
+        analyst review, and community reporting to keep spaces safe for creators and fans alike.
+      </p>
+    </section>
+
+    <section class="capabilities">
+      <article>
+        <h3>Expansive Coverage</h3>
+        <p>Moderation pipelines for chat, comments, media, and live interactions with context-aware filtering.</p>
+      </article>
+      <article>
+        <h3>Human Insight</h3>
+        <p>Experienced moderators oversee escalations and refine our detection models with real-world judgment.</p>
+      </article>
+      <article>
+        <h3>Transparent Reporting</h3>
+        <p>Dashboards that show trends, incidents resolved, and actions taken for every community.</p>
+      </article>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-copy">
+        <h2>Talk with Reyven Tech</h2>
+        <p>Drop in your email and we will respond through your preferred provider within one business day.</p>
+      </div>
+      <form id="contactForm" action="https://formsubmit.co/reyansh@reyven-tech.com" method="POST">
+        <input type="hidden" name="_subject" value="New Reyven Tech Moderation Inquiry">
+        <input type="hidden" name="_next" value="https://reyven.tech/thank-you">
+        <input type="hidden" name="_captcha" value="false">
+        <label>
+          Your name
+          <input type="text" name="name" required placeholder="Venisha Katuri">
+        </label>
+        <label>
+          Your email
+          <input type="email" name="email" required placeholder="you@example.com">
+        </label>
+        <label>
+          Organization
+          <input type="text" name="org" placeholder="Reyven Studios">
+        </label>
+        <label>
+          Message
+          <textarea name="message" required placeholder="Tell us the community we can help moderate."></textarea>
+        </label>
+        <button type="submit">Send Inquiry</button>
+        <p class="mail-helps">We email your message straight to our Outlook inbox without any account setup.</p>
+      </form>
+    </section>
+  </main>
+
+    <footer>
+    <p>© 2025 Reyven Tech</p>
+    <a href="mailto:reyansh@reyven-tech.com">reyansh@reyven-tech.com</a>
+  </footer>
+
+    <script>
+      document.getElementById('contactButton').addEventListener('click', () => {
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      });
+    </script>
+</body>
+</html>
