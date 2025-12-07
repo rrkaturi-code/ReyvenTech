@@ -10,6 +10,11 @@ body {
   color: #f4f7ff;
   min-height: 100vh;
   line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-user-select: text;
+  user-select: text;
+  forced-color-adjust: none;
 }
 
 header.hero {
@@ -74,12 +79,15 @@ button.primary {
   background: linear-gradient(180deg, rgba(69, 199, 255, 0.1), rgba(124, 77, 255, 0.05));
   border: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 .hero-visual .glow {
   position: absolute;
   inset: 0;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 60%);
+  -webkit-filter: blur(6px);
   filter: blur(6px);
 }
 
@@ -106,6 +114,8 @@ section {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.25rem;
   padding: 2rem;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .mission h2,
