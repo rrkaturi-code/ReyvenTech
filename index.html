@@ -128,6 +128,18 @@
               <p>The guardian is ready to approve via email code.</p>
             </div>
           </div>
+          <div class="notifications-panel">
+            <div class="notifications-heading">
+              <h2>Guardian Notifications</h2>
+              <span class="pill" id="notificationBadge">0 unread</span>
+            </div>
+            <p>Parents receive alerts via email/push the instant a filter fires or behavior is risky.</p>
+            <ul id="notificationsList"></ul>
+            <div class="control-row">
+              <button class="primary" id="snoozeBtn">Snooze alerts 30m</button>
+              <button class="primary" id="testAlertBtn">Send test alert</button>
+            </div>
+          </div>
       </div>
     </section>
 
@@ -222,6 +234,10 @@
           const downloadBtn = document.getElementById('downloadBtn');
           const paymentEmail = document.getElementById('paymentEmail');
           const paymentFeedback = document.getElementById('paymentFeedback');
+          const notificationsList = document.getElementById('notificationsList');
+          const notificationBadge = document.getElementById('notificationBadge');
+          const snoozeBtn = document.getElementById('snoozeBtn');
+          const testAlertBtn = document.getElementById('testAlertBtn');
 
           let locked = false;
           let rewardPoints = 3;
@@ -234,11 +250,35 @@
             dumb: 'dino'
           };
 
+          let unreadNotifications = 0;
+          let notificationsSnoozed = false;
+
           const appendLog = (label, message) => {
             const entry = document.createElement('div');
             entry.className = 'behavior-entry';
             entry.innerHTML = `<span>${label}</span><p>${message}</p>`;
             behaviorLog.prepend(entry);
+          };
+
+          const addNotification = (type, message) => {
+            if (notificationsSnoozed) {
+              appendLog('Notification', `Snoozed: ${type}`);
+              return;
+            }
+
+            const item = document.createElement('li');
+            item.innerHTML = `<strong>${type}</strong><small>${new Date().toLocaleTimeString()}</small>`;
+            const detail = document.createElement('p');
+            detail.textContent = message;
+            item.appendChild(detail);
+            notificationsList.prepend(item);
+            unreadNotifications += 1;
+            notificationBadge.textContent = `${unreadNotifications} unread`;
+          };
+
+          const markNotificationsRead = () => {
+            unreadNotifications = 0;
+            notificationBadge.textContent = '0 unread';
           };
 
           const updateLockState = (state, reason) => {
@@ -265,6 +305,9 @@
             guardianStatus.textContent = guardianModeOn ? 'Guardian mode active' : 'Guardian mode idle';
             twoFaPill.textContent = guardianModeOn ? '2FA verified' : '2FA enforced';
             appendLog('Guardian', guardianModeOn ? 'Entered guardian mode.' : 'Exited guardian mode.');
+            if (guardianModeOn) {
+              markNotificationsRead();
+            }
           });
 
           sendUnlockCodeBtn.addEventListener('click', () => {
@@ -272,6 +315,8 @@
             if (locked) {
               updateLockState(false, 'Guardian approved via email code.');
               appendLog('Status', 'Child device unlocked.');
+              addNotification('Unlock', 'Guardian approved the unlock code.');
+              markNotificationsRead();
             }
           });
 
@@ -289,10 +334,12 @@
               setTimeout(() => updateLockState(true, `Parent alerted for ${badWord}.`), 200);
               filterPhrase.textContent = `Auto-replace: "${replacements[badWord]}" for "${badWord}".`;
               appendLog('Filter triggered', `Replaced ${badWord} with ${replacements[badWord]}.`);
+              addNotification('Filter triggered', `Replaced "${badWord}" with "${replacements[badWord]}" and notified the guardian.`);
             } else {
               rewardPoints += 1;
               updateRewardText();
               appendLog('Positive', `"${text}" cleared as safe and earned a reward.`);
+              addNotification('Positive behavior', `"${text}" counted toward rewards.`);
             }
 
             searchInput.value = '';
@@ -306,11 +353,22 @@
             }
           });
 
+          snoozeBtn.addEventListener('click', () => {
+            notificationsSnoozed = !notificationsSnoozed;
+            snoozeBtn.textContent = notificationsSnoozed ? 'Alerts snoozed' : 'Snooze alerts 30m';
+            appendLog('Notifications', notificationsSnoozed ? 'Alerts snoozed' : 'Alerts unsnoozed');
+          });
+
+          testAlertBtn.addEventListener('click', () => {
+            addNotification('Test alert', 'This is a test alert delivered for verification.');
+          });
+
           const markPaid = () => {
             paymentFeedback.textContent = 'Payment successful. Installer unlocked.';
             paymentFeedback.style.color = '#8cb9ff';
             downloadBtn.disabled = false;
             downloadBtn.textContent = 'Download Reyven Tech Guardian';
+            addNotification('Payment', `Activation fee received for ${paymentEmail.value}.`);
           };
 
           payButton.addEventListener('click', () => {
@@ -337,6 +395,7 @@
               return;
             }
 
+            addNotification('Installer', 'Download started on the guardian device.');
             appendLog('Download', 'Installer download started.');
             downloadBtn.textContent = 'Downloading…';
             setTimeout(() => {
