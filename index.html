@@ -25,6 +25,20 @@
     </div>
   </header>
 
+  <section class="payment-section">
+    <h2>Final $1 Activation Fee</h2>
+    <p>The Reyven Tech guardian software requires a one-time $1 activation fee. Pay securely using the card on file and the download link will unlock instantly for the child device.</p>
+    <div class="payment-row">
+      <label>
+        Registered email
+        <input type="email" id="paymentEmail" placeholder="guardian@example.com" required>
+      </label>
+      <button class="primary" id="payButton">Pay $1 &amp; Unlock Download</button>
+    </div>
+    <p class="mail-helps" id="paymentFeedback">You will receive a confirmation email after the charge.</p>
+    <button class="primary" id="downloadBtn" disabled>Download Reyven Tech Guardian</button>
+  </section>
+
   <main>
     <section class="mission">
       <h2>Our Mission</h2>
@@ -204,6 +218,10 @@
           const searchBtn = document.getElementById('searchBtn');
           const enterGuardianModeBtn = document.getElementById('enterGuardianModeBtn');
           const sendUnlockCodeBtn = document.getElementById('sendUnlockCodeBtn');
+          const payButton = document.getElementById('payButton');
+          const downloadBtn = document.getElementById('downloadBtn');
+          const paymentEmail = document.getElementById('paymentEmail');
+          const paymentFeedback = document.getElementById('paymentFeedback');
 
           let locked = false;
           let rewardPoints = 3;
@@ -286,6 +304,44 @@
               event.preventDefault();
               handleSearch();
             }
+          });
+
+          const markPaid = () => {
+            paymentFeedback.textContent = 'Payment successful. Installer unlocked.';
+            paymentFeedback.style.color = '#8cb9ff';
+            downloadBtn.disabled = false;
+            downloadBtn.textContent = 'Download Reyven Tech Guardian';
+          };
+
+          payButton.addEventListener('click', () => {
+            if (!paymentEmail.value) {
+              paymentFeedback.textContent = 'Enter a valid email to receive the receipt.';
+              paymentFeedback.style.color = '#ff8c8c';
+              return;
+            }
+
+            payButton.textContent = 'Processing…';
+            payButton.disabled = true;
+            appendLog('Payment', 'Processing $1 activation.');
+
+            setTimeout(() => {
+              markPaid();
+              appendLog('Payment', `Charged $1 to ${paymentEmail.value}.`);
+            }, 1400);
+          });
+
+          downloadBtn.addEventListener('click', () => {
+            if (downloadBtn.disabled) {
+              paymentFeedback.textContent = 'Complete the $1 activation to download.';
+              paymentFeedback.style.color = '#ff8c8c';
+              return;
+            }
+
+            appendLog('Download', 'Installer download started.');
+            downloadBtn.textContent = 'Downloading…';
+            setTimeout(() => {
+              downloadBtn.textContent = 'Download Reyven Tech Guardian';
+            }, 2000);
           });
 
           updateRewardText();
