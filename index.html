@@ -58,6 +58,65 @@
       </article>
     </section>
 
+    <section class="app-shell">
+      <h2>Reyven Tech Guardian App</h2>
+      <div class="app-summary">
+        <div class="app-card">
+          <span>Child Device</span>
+          <p class="app-status" id="deviceStatus">Online · Protected</p>
+          <p id="alertCount">Showing 0 alerts in the last 24h.</p>
+        </div>
+        <div class="app-card lockdown">
+          <span>Lockdown Status</span>
+          <p class="app-status" id="lockStatusText">Unlocked</p>
+          <p id="lockStatusUpdate">The child device is free to browse safe apps.</p>
+        </div>
+        <div class="app-card">
+          <span>Guardian Mode</span>
+          <p class="app-status" id="guardianStatus">2FA Enabled</p>
+          <p id="pinUpdate">Monthly PIN resets required — last updated 3 days ago.</p>
+        </div>
+      </div>
+
+      <div class="parent-panel">
+        <h2>Parent Controls</h2>
+        <p>Only guardians with the monthly PIN and email 2FA can change safety settings.</p>
+        <div class="control-row">
+          <button class="primary" id="enterGuardianModeBtn">Enter Guardian Mode</button>
+          <button class="primary" id="sendUnlockCodeBtn" style="background:#ff8c8c">Send Unlock Code</button>
+          <span class="pill" id="twoFaPill">2FA enforced</span>
+        </div>
+      </div>
+
+      <div class="child-panel">
+        <h2>Child Experience</h2>
+          <p>Searches and messages filtered live; replace words such as “bitch” with fun alternatives and notify the parent immediately.</p>
+          <div class="control-row" style="margin-bottom:1rem;">
+            <input id="searchInput" placeholder="Simulate search or chat" aria-label="Simulated child search" />
+            <button class="primary" id="searchBtn">Trigger Filter</button>
+          </div>
+          <p id="filterMode">Auto-replace: "apple" for forbidden words.</p>
+          <div class="behavior-log" id="behaviorLog"></div>
+          <div class="behavior-grid">
+            <div class="app-card">
+              <span>Recent Behavior</span>
+              <p class="app-status" id="behaviorStatus">Good</p>
+              <p id="rewardPoints">3 reward points earned; eligible for a gift card.</p>
+            </div>
+            <div class="app-card">
+              <span>Active Filter</span>
+              <p class="app-status" id="filterStatus">Creative Mode</p>
+              <p id="filterPhrase">Auto-replace: "apple" for forbidden words.</p>
+            </div>
+            <div class="app-card lockdown">
+              <span>Lockdown</span>
+              <p class="app-status" id="lockdownStatus">Not triggered</p>
+              <p>The guardian is ready to approve via email code.</p>
+            </div>
+          </div>
+      </div>
+    </section>
+
     <section class="contact" id="contact">
       <div class="contact-copy">
         <h2>Talk with Reyven Tech</h2>
@@ -128,5 +187,109 @@
           });
       });
     </script>
+      <script>
+        (function() {
+          const lockStatusText = document.getElementById('lockStatusText');
+          const lockStatusUpdate = document.getElementById('lockStatusUpdate');
+          const lockdownStatus = document.getElementById('lockdownStatus');
+          const behaviorLog = document.getElementById('behaviorLog');
+          const rewardPointsEl = document.getElementById('rewardPoints');
+          const behaviorStatus = document.getElementById('behaviorStatus');
+          const filterPhrase = document.getElementById('filterPhrase');
+          const alertCountEl = document.getElementById('alertCount');
+          const guardianStatus = document.getElementById('guardianStatus');
+          const twoFaPill = document.getElementById('twoFaPill');
+          const childPanel = document.querySelector('.child-panel');
+          const searchInput = document.getElementById('searchInput');
+          const searchBtn = document.getElementById('searchBtn');
+          const enterGuardianModeBtn = document.getElementById('enterGuardianModeBtn');
+          const sendUnlockCodeBtn = document.getElementById('sendUnlockCodeBtn');
+
+          let locked = false;
+          let rewardPoints = 3;
+          let alerts = 0;
+          let guardianModeOn = false;
+          const replacements = {
+            bitch: 'apple',
+            fuck: 'fudge',
+            idiot: 'kiwi',
+            dumb: 'dino'
+          };
+
+          const appendLog = (label, message) => {
+            const entry = document.createElement('div');
+            entry.className = 'behavior-entry';
+            entry.innerHTML = `<span>${label}</span><p>${message}</p>`;
+            behaviorLog.prepend(entry);
+          };
+
+          const updateLockState = (state, reason) => {
+            locked = state;
+            lockStatusText.textContent = state ? 'Locked' : 'Unlocked';
+            lockStatusUpdate.textContent = reason;
+            lockdownStatus.textContent = state ? 'Triggered' : 'Not triggered';
+            childPanel.classList.toggle('locked', state);
+            behaviorStatus.textContent = state ? 'Needs review' : 'Good';
+          };
+
+          const updateRewardText = () => {
+            const suffix = rewardPoints >= 5 ? 'Eligible for a gift card.' : 'Keep it up for a gift card.';
+            rewardPointsEl.textContent = `${rewardPoints} reward points earned; ${suffix}`;
+          };
+
+          const incrementAlert = () => {
+            alerts += 1;
+            alertCountEl.textContent = `Showing ${alerts} alerts in the last 24h.`;
+          };
+
+          enterGuardianModeBtn.addEventListener('click', () => {
+            guardianModeOn = !guardianModeOn;
+            guardianStatus.textContent = guardianModeOn ? 'Guardian mode active' : 'Guardian mode idle';
+            twoFaPill.textContent = guardianModeOn ? '2FA verified' : '2FA enforced';
+            appendLog('Guardian', guardianModeOn ? 'Entered guardian mode.' : 'Exited guardian mode.');
+          });
+
+          sendUnlockCodeBtn.addEventListener('click', () => {
+            appendLog('Unlock', 'Guardian code sent to the registered email.');
+            if (locked) {
+              updateLockState(false, 'Guardian approved via email code.');
+              appendLog('Status', 'Child device unlocked.');
+            }
+          });
+
+          const handleSearch = () => {
+            const text = searchInput.value.trim();
+            if (!text) {
+              return;
+            }
+
+            const normalized = text.toLowerCase();
+            const badWord = Object.keys(replacements).find(word => normalized.includes(word));
+
+            if (badWord) {
+              incrementAlert();
+              setTimeout(() => updateLockState(true, `Parent alerted for ${badWord}.`), 200);
+              filterPhrase.textContent = `Auto-replace: "${replacements[badWord]}" for "${badWord}".`;
+              appendLog('Filter triggered', `Replaced ${badWord} with ${replacements[badWord]}.`);
+            } else {
+              rewardPoints += 1;
+              updateRewardText();
+              appendLog('Positive', `"${text}" cleared as safe and earned a reward.`);
+            }
+
+            searchInput.value = '';
+          };
+
+          searchBtn.addEventListener('click', handleSearch);
+          searchInput.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              handleSearch();
+            }
+          });
+
+          updateRewardText();
+        })();
+      </script>
 </body>
 </html>
