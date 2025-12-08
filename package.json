@@ -1,0 +1,19 @@
+{
+  "name": "reyven-tech",
+  "version": "1.0.0",
+  "description": "Desktop-ready Guardian and moderation UI for Reyven Tech",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "moderation",
+    "parental-controls",
+    "electron"
+  ],
+  "author": "Reyansh Katuri",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^26.5.0"
+  }
+}
